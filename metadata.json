@@ -1,0 +1,8 @@
+{
+  "name": "AgriVision AI - Precision Agriculture & Farm Intelligence Platform",
+  "description": "AI-powered precision agriculture platform featuring CNN crop disease detection, YOLO damage analysis, soil health IoT monitoring, Random Forest crop recommendations, interactive Leaflet farm mapping, Gemini agronomist assistant, and SHA-256 blockchain verification.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

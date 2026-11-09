@@ -1,0 +1,174 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Farmer or agricultural specialist user account profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique Firebase user ID" },
+        "fullName": { "type": "string", "description": "Farmer's full name", "maxLength": 100 },
+        "email": { "type": "string", "description": "Account email address", "maxLength": 150 },
+        "phone": { "type": "string", "description": "Farmer contact number", "maxLength": 30 },
+        "region": { "type": "string", "description": "Agricultural zone or district", "maxLength": 100 },
+        "role": { "type": "string", "description": "User role: farmer, agronomist, researcher, admin", "maxLength": 30 },
+        "createdAt": { "type": "string", "description": "Creation timestamp in ISO format" }
+      },
+      "required": ["uid", "fullName", "email", "role"]
+    },
+    "Farm": {
+      "title": "Farm",
+      "description": "Agricultural land holding and plot details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Farm unique identifier" },
+        "userId": { "type": "string", "description": "Owner farmer user ID" },
+        "name": { "type": "string", "description": "Farm property name", "maxLength": 120 },
+        "location": { "type": "string", "description": "State/District location string", "maxLength": 120 },
+        "totalAcres": { "type": "number", "description": "Total acreage of farm" },
+        "primaryCrop": { "type": "string", "description": "Primary crop cultivated", "maxLength": 80 },
+        "soilType": { "type": "string", "description": "Dominant soil type (Alluvial, Black, Red, Clay, Sandy, Loamy)", "maxLength": 50 },
+        "irrigationType": { "type": "string", "description": "Irrigation system used (Drip, Sprinkler, Canal, Rainfed)", "maxLength": 50 },
+        "latitude": { "type": "number", "description": "Latitude coordinate" },
+        "longitude": { "type": "number", "description": "Longitude coordinate" },
+        "polygonCoords": { "type": "string", "description": "Serialized boundary coordinates for farm mapping" },
+        "createdAt": { "type": "string", "description": "Farm record creation timestamp" }
+      },
+      "required": ["id", "userId", "name", "location", "totalAcres"]
+    },
+    "SoilReading": {
+      "title": "SoilReading",
+      "description": "IoT sensor telemetry or soil lab test parameters",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Soil reading record ID" },
+        "userId": { "type": "string", "description": "Farmer user ID" },
+        "farmId": { "type": "string", "description": "Associated farm ID" },
+        "nitrogen": { "type": "number", "description": "Available Nitrogen (N) in mg/kg (ppm)" },
+        "phosphorus": { "type": "number", "description": "Available Phosphorus (P) in mg/kg (ppm)" },
+        "potassium": { "type": "number", "description": "Available Potassium (K) in mg/kg (ppm)" },
+        "ph": { "type": "number", "description": "Soil pH level (0-14)" },
+        "moisture": { "type": "number", "description": "Volumetric water content percentage" },
+        "temperature": { "type": "number", "description": "Soil temperature in Celsius" },
+        "organicMatter": { "type": "number", "description": "Organic carbon percentage" },
+        "electricalConductivity": { "type": "number", "description": "EC in dS/m" },
+        "healthScore": { "type": "number", "description": "Calculated soil fertility index 0-100" },
+        "sensorSource": { "type": "string", "description": "IoT device telemetry or Lab test input", "maxLength": 50 },
+        "createdAt": { "type": "string", "description": "Reading timestamp" }
+      },
+      "required": ["id", "userId", "farmId", "nitrogen", "phosphorus", "potassium", "ph", "moisture"]
+    },
+    "DiseaseScan": {
+      "title": "DiseaseScan",
+      "description": "CNN and Gemini multimodal plant disease detection assessment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Scan unique identifier" },
+        "userId": { "type": "string", "description": "Farmer ID who uploaded the image" },
+        "farmId": { "type": "string", "description": "Associated farm ID" },
+        "cropType": { "type": "string", "description": "Plant or crop species", "maxLength": 80 },
+        "diseaseDetected": { "type": "string", "description": "Diagnosed disease or Healthy", "maxLength": 120 },
+        "confidence": { "type": "number", "description": "Model confidence percentage (0-100)" },
+        "severity": { "type": "string", "description": "Severity level: Low, Moderate, High, Severe", "maxLength": 30 },
+        "symptoms": { "type": "string", "description": "Observed pathological symptoms summary", "maxLength": 500 },
+        "organicTreatment": { "type": "string", "description": "Biological and organic remedy instructions", "maxLength": 800 },
+        "chemicalTreatment": { "type": "string", "description": "Fungicide/pesticide dosage instructions", "maxLength": 800 },
+        "imageUrl": { "type": "string", "description": "Image data URI or storage URL" },
+        "verifiedOnBlockchain": { "type": "boolean", "description": "Whether report is notarized on blockchain ledger" },
+        "blockchainTxHash": { "type": "string", "description": "Immutable ledger transaction hash", "maxLength": 100 },
+        "sha256Hash": { "type": "string", "description": "Cryptographic report payload hash", "maxLength": 100 },
+        "createdAt": { "type": "string", "description": "Timestamp of scan" }
+      },
+      "required": ["id", "userId", "cropType", "diseaseDetected", "confidence"]
+    },
+    "DamageAssessment": {
+      "title": "DamageAssessment",
+      "description": "YOLO object detection crop damage and pest infestation assessment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Damage assessment unique ID" },
+        "userId": { "type": "string", "description": "Farmer ID" },
+        "farmId": { "type": "string", "description": "Farm identifier" },
+        "cropType": { "type": "string", "description": "Affected crop species", "maxLength": 80 },
+        "damageCategory": { "type": "string", "description": "Pest, Hail, Drought, Flood, Weed, Blight", "maxLength": 50 },
+        "damagePercentage": { "type": "number", "description": "Estimated field area damage percent" },
+        "boxesCount": { "type": "number", "description": "Number of detected damage instances/bounding boxes" },
+        "detectedObjects": { "type": "string", "description": "JSON serialized list of detected damage boxes and labels" },
+        "actionRequired": { "type": "string", "description": "Immediate agricultural mitigation action", "maxLength": 600 },
+        "imageUrl": { "type": "string", "description": "Analyzed field drone/camera image" },
+        "createdAt": { "type": "string", "description": "Assessment timestamp" }
+      },
+      "required": ["id", "userId", "cropType", "damageCategory", "damagePercentage"]
+    },
+    "CropRecommendation": {
+      "title": "CropRecommendation",
+      "description": "Random Forest ML agro-climatic crop recommendation output",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Recommendation unique ID" },
+        "userId": { "type": "string", "description": "Farmer ID" },
+        "farmId": { "type": "string", "description": "Farm ID" },
+        "nitrogen": { "type": "number", "description": "N input value" },
+        "phosphorus": { "type": "number", "description": "P input value" },
+        "potassium": { "type": "number", "description": "K input value" },
+        "temperature": { "type": "number", "description": "Ambient temperature in C" },
+        "humidity": { "type": "number", "description": "Relative humidity percentage" },
+        "ph": { "type": "number", "description": "Soil pH" },
+        "rainfall": { "type": "number", "description": "Seasonal rainfall in mm" },
+        "topCrop": { "type": "string", "description": "Top recommended crop name", "maxLength": 80 },
+        "topProbability": { "type": "number", "description": "Prediction probability percentage" },
+        "allRecommendations": { "type": "string", "description": "JSON serialized ranked list of suitable crops" },
+        "fertilizerAdvice": { "type": "string", "description": "Recommended NPK balancing dosage", "maxLength": 600 },
+        "createdAt": { "type": "string", "description": "Calculation timestamp" }
+      },
+      "required": ["id", "userId", "topCrop", "topProbability"]
+    },
+    "BlockchainRecord": {
+      "title": "BlockchainRecord",
+      "description": "Immutable notarization audit trail on Solidity smart contract",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Record unique ID" },
+        "userId": { "type": "string", "description": "Submitting user ID" },
+        "reportId": { "type": "string", "description": "Referenced diagnostic or soil report ID", "maxLength": 100 },
+        "reportType": { "type": "string", "description": "DISEASE_SCAN, DAMAGE_AUDIT, SOIL_TEST, YIELD_CERT", "maxLength": 50 },
+        "sha256Hash": { "type": "string", "description": "SHA-256 digest of the report payload", "maxLength": 100 },
+        "txHash": { "type": "string", "description": "Ethereum / Polygon transaction hash", "maxLength": 100 },
+        "blockNumber": { "type": "number", "description": "Mined block index number" },
+        "contractAddress": { "type": "string", "description": "Smart contract address", "maxLength": 60 },
+        "status": { "type": "string", "description": "CONFIRMED, PENDING, REVERTED", "maxLength": 30 },
+        "timestamp": { "type": "string", "description": "Block mint timestamp" }
+      },
+      "required": ["id", "userId", "reportId", "sha256Hash", "txHash", "blockNumber", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores farmer and researcher profile credentials and preferences"
+    },
+    "/farms/{farmId}": {
+      "schema": { "$ref": "#/entities/Farm" },
+      "description": "Stores farm land boundaries, soil properties, and acreage"
+    },
+    "/soil_readings/{readingId}": {
+      "schema": { "$ref": "#/entities/SoilReading" },
+      "description": "Stores NPK, pH, moisture, and temperature readings"
+    },
+    "/disease_scans/{scanId}": {
+      "schema": { "$ref": "#/entities/DiseaseScan" },
+      "description": "Stores CNN crop disease diagnostic results and organic remedies"
+    },
+    "/damage_assessments/{assessmentId}": {
+      "schema": { "$ref": "#/entities/DamageAssessment" },
+      "description": "Stores YOLO crop damage percentages and bounding boxes"
+    },
+    "/crop_recommendations/{recId}": {
+      "schema": { "$ref": "#/entities/CropRecommendation" },
+      "description": "Stores Random Forest ML crop recommendation predictions"
+    },
+    "/blockchain_records/{recordId}": {
+      "schema": { "$ref": "#/entities/BlockchainRecord" },
+      "description": "Stores immutable SHA-256 cryptographic audit certificates"
+    }
+  }
+}

@@ -1,0 +1,122 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Users Collection: profile accessible by owner
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Deny public enumeration of farmers
+      allow create: if isOwner(userId)
+                    && request.resource.data.uid == userId
+                    && request.resource.data.fullName is string
+                    && request.resource.data.fullName.size() <= 100;
+      allow update: if isOwner(userId)
+                    && request.resource.data.uid == userId
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName', 'phone', 'region', 'role']);
+      allow delete: if isOwner(userId);
+    }
+
+    // Farms Collection
+    match /farms/{farmId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(farmId)
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() <= 120;
+      allow update: if isSignedIn()
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Soil Readings Collection
+    match /soil_readings/{readingId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(readingId)
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.nitrogen is number
+                    && request.resource.data.phosphorus is number
+                    && request.resource.data.potassium is number;
+      allow update: if isSignedIn()
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Disease Scans Collection
+    match /disease_scans/{scanId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(scanId)
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.cropType is string
+                    && request.resource.data.diseaseDetected is string;
+      allow update: if isSignedIn()
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Damage Assessments Collection
+    match /damage_assessments/{assessmentId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(assessmentId)
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.cropType is string;
+      allow update: if isSignedIn()
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Crop Recommendations Collection
+    match /crop_recommendations/{recId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(recId)
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.topCrop is string;
+      allow update: if isSignedIn()
+                    && resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Blockchain Records Collection
+    match /blockchain_records/{recordId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(recordId)
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.sha256Hash is string;
+      allow update: if false; // Immutable ledger - updates strictly forbidden
+      allow delete: if false; // Immutable ledger - deletion strictly forbidden
+    }
+  }
+}
