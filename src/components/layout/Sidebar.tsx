@@ -14,7 +14,8 @@ import {
   FileBarChart2,
   Settings,
   Home,
-  Code2
+  Code2,
+  Brain
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -39,6 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         { label: 'Disease Detection (CNN)', path: '/disease', icon: ScanEye },
         { label: 'Crop Damage (YOLO)', path: '/damage', icon: Crosshair },
         { label: 'Crop Advisor (RF)', path: '/recommend', icon: Sparkles },
+        { label: 'AI Model Studio', path: '/model-studio', icon: Brain, badge: 'Custom' },
         { label: 'Gemini AI Assistant', path: '/assistant', icon: BotMessageSquare, badge: 'Flash' },
         { label: 'Weather & Advisory', path: '/weather', icon: CloudSun },
       ]

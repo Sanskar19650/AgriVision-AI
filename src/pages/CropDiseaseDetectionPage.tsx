@@ -11,8 +11,10 @@ import {
   Sparkles,
   RefreshCw,
   ExternalLink,
-  Printer
+  Printer,
+  Brain
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Badge } from '../components/common/Badge';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { SAMPLE_LEAF_IMAGES } from '../services/mockData';
@@ -130,7 +132,14 @@ export const CropDiseaseDetectionPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            to="/model-studio"
+            className="px-3.5 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center gap-1.5 border border-emerald-200 transition-colors"
+          >
+            <Brain className="w-3.5 h-3.5 text-emerald-600" />
+            <span>AI Model Studio (Inspect / Train)</span>
+          </Link>
           <label className="cursor-pointer px-4 py-2.5 rounded-xl border border-stone-300 hover:bg-stone-50 font-semibold text-xs text-stone-700 flex items-center gap-2 transition-colors">
             <Upload className="w-4 h-4 text-emerald-600" />
             Upload Leaf Image

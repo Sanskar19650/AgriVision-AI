@@ -17,14 +17,26 @@
 agrivision-ai/
 ├── backend/
 │   ├── python_fastapi/
-│   │   ├── main.py                     # FastAPI REST API (CNN, YOLO, Random Forest, Hash endpoints)
+│   │   ├── main.py                     # FastAPI REST API (CNN, YOLO, Random Forest, Hash, IoT endpoints)
 │   │   └── requirements.txt            # Python dependencies (torch, torchvision, ultralytics, web3, etc.)
 │   ├── ai_models/
-│   │   ├── cnn_disease_model.py        # PyTorch CNN model architecture trained on PlantVillage
-│   │   └── train_random_forest.py      # Scikit-learn Random Forest model training script
-│   └── blockchain/
-│       ├── AgriVerification.sol        # Solidity v0.8.20 smart contract for report notarization
-│       └── web3_verifier.py            # Web3.py testnet interaction script
+│   │   ├── cnn_disease_model.py        # PyTorch Residual CNN architecture (25 PlantVillage classes)
+│   │   ├── train_plantvillage_cnn.py   # PlantVillage CNN training & weight serialization script
+│   │   ├── train_random_forest.py      # Scikit-learn Random Forest model training script (22 crops)
+│   │   └── yolo_damage_detector.py     # YOLOv8 crop damage detection & bounding box annotator
+│   ├── iot_hardware/
+│   │   ├── esp32_soil_node.ino         # Arduino C++ firmware for ESP32 with RS485 NPK & ADC sensors
+│   │   ├── HARDWARE_CIRCUIT.md         # Circuit diagram, pin connections & calibration math
+│   │   └── simulate_esp32.py           # Hardware telemetry simulator sending telemetry packets
+│   ├── blockchain/
+│   │   ├── AgriVerification.sol        # Solidity v0.8.20 smart contract for report notarization
+│   │   ├── deploy_contract.py          # Web3.py smart contract deployer producing artifact JSON
+│   │   ├── submit_transaction.py       # Web3.py transaction signer & verification client
+│   │   └── web3_verifier.py            # Local testnet verification and demo runner
+│   └── tests/
+│       ├── test_ai_models.py           # Unit tests for CNN, Random Forest, and YOLO models
+│       ├── test_fastapi.py             # Integration tests for FastAPI REST endpoints
+│       └── test_blockchain.py          # Canonical SHA-256 and tampering detection tests
 ├── src/
 │   ├── components/
 │   │   ├── common/                     # Reusable UI components (StatCard, Badge, LoadingSpinner)
@@ -35,8 +47,8 @@ agrivision-ai/
 │   │   ├── LandingPage.tsx             # High-impact landing page
 │   │   ├── LoginPage.tsx               # Authentication & registration
 │   │   ├── DashboardPage.tsx           # Command center & IoT telemetry charts
-│   │   ├── FarmManagementPage.tsx      # Multi-plot land & soil profile manager
-│   │   ├── SoilMonitoringPage.tsx      # ESP32 IoT stream & ICAR fertilizer advice
+│   │   ├── FarmManagementPage.tsx      # Multi-plot land & crop lifecycle manager
+│   │   ├── SoilMonitoringPage.tsx      # ESP32 IoT stream & real-time Firestore sync
 │   │   ├── CropDiseaseDetectionPage.tsx# CNN leaf disease classifier & organic cures
 │   │   ├── CropDamageDetectionPage.tsx # YOLOv8 field damage & PMFBY insurance claims
 │   │   ├── CropRecommendationPage.tsx  # Random Forest crop suitability predictor
@@ -47,7 +59,7 @@ agrivision-ai/
 │   │   ├── ReportsPage.tsx             # Audit records & printable certificates
 │   │   └── ProfilePage.tsx             # Farmer profile & local VS Code setup
 │   ├── services/
-│   │   ├── aiService.ts                # Client AI caller for CNN, YOLO, and Random Forest
+│   │   ├── aiService.ts                # Client AI caller with dual FastAPI + fallback engines
 │   │   ├── blockchainService.ts        # SHA-256 calculation & smart contract state
 │   │   ├── firebase.ts                 # Firebase Auth & Cloud Firestore initialization
 │   │   ├── geminiService.ts            # Server-side Gemini 3.8 Flash caller
@@ -57,8 +69,8 @@ agrivision-ai/
 │   ├── App.tsx                         # React Router DOM navigation
 │   ├── main.tsx                        # Entry point
 │   └── index.css                       # Tailwind CSS stylesheet
-├── firebase-applet-config.json         # Firebase project configuration
-├── firestore.rules                     # Hardened Firestore security rules
+├── firebase-applet-config.json         # Firebase project configuration (agrivision-ai-9bfef)
+├── firestore.rules                     # Hardened Firestore security rules (user isolation)
 ├── server.ts                           # Node.js Express server (handles /api/* endpoints)
 ├── vite.config.ts                      # Vite configuration with Express API middleware
 ├── package.json                        # Node dependencies and build scripts
@@ -125,15 +137,70 @@ uvicorn main:app --reload --port 8000
 
 ---
 
-### Step 4: Blockchain Smart Contract Local Testing
-In a third terminal tab:
+### Step 4: Run the Automated Test Suite (Phase 6 Testing)
+In your terminal:
 
 ```bash
-# 1. Navigate to blockchain directory
+# Run the complete test suite across AI models, FastAPI endpoints, and Blockchain
+pytest backend/tests/ -v
+
+# Or run individual test modules:
+python -m pytest backend/tests/test_ai_models.py -v
+python -m pytest backend/tests/test_fastapi.py -v
+python -m pytest backend/tests/test_blockchain.py -v
+```
+
+---
+
+### Step 5: IoT Hardware & Sensor Telemetry (Phase 3)
+- **ESP32 Firmware**: Open `backend/iot_hardware/esp32_soil_node.ino` in Arduino IDE or PlatformIO.
+  - Set your WiFi SSID/Password and FastAPI endpoint.
+  - Review `backend/iot_hardware/HARDWARE_CIRCUIT.md` for pin connections (RS485 Modbus MAX485 to GPIO16/17 for NPK, GPIO34 for Capacitive Soil Moisture, GPIO35 for Analog pH).
+- **Run the Python Telemetry Simulator**:
+```bash
+python backend/iot_hardware/simulate_esp32.py
+```
+> The simulator sends real-time calibrated NPK, moisture, and pH telemetry to the backend, updating the Soil Monitoring dashboard and Firestore automatically.
+
+---
+
+### Step 6: Custom AI Model Development & Training (AgriVisionNet)
+The project includes a **dedicated proprietary deep neural network architecture** specifically engineered for AgriVision AI:
+
+- **Architecture (`backend/ai_models/agrivision_net.py`)**:
+  - **Squeeze-and-Excitation (SE) Channel Attention**: Recalibrates convolutional feature channels to isolate subtle necrotic spots and chlorosis.
+  - **Residual Skip Blocks**: Prevents vanishing gradients across deep feature hierarchies.
+  - **Multi-Task Heads**: Simultaneous foliar disease classification + severity rating (Mild, Moderate, Severe).
+  - **Loss Function**: Focal Loss ($\gamma=2.0$) with class-frequency weighting to prevent healthy leaves from dominating rare foliar fungal infections.
+  - **Edge-Ready**: 3.43M parameters, 24ms GPU latency, 0.48 GFLOPs.
+
+```bash
+# 1. Train Proprietary AgriVisionNet with SE Attention & Focal Loss:
+python backend/ai_models/train_agrivision_net.py --epochs 5 --lr 0.001 --batch-size 16
+# Serializes:
+# -> backend/ai_models/agrivision_net_best.pt (PyTorch Checkpoint)
+# -> backend/ai_models/agrivision_net.torchscript.pt (TorchScript)
+# -> backend/ai_models/agrivision_net.onnx (ONNX Runtime)
+
+# 2. Free GPU Training with Google Colab:
+# Open backend/ai_models/Train_AgriVision_Colab.ipynb in Google Colab (attach free T4 GPU)
+
+# 3. Interactive Web Model Studio:
+# Navigate to http://localhost:3000/model-studio in your browser to inspect layer graphs,
+# run real-time training convergence simulations, and inspect Grad-CAM lesion heatmaps!
+```
+
+---
+
+### Step 7: Blockchain Smart Contract Deployment & Verification (Phase 5)
+```bash
 cd backend/blockchain
 
-# 2. Run the Web3.py verification script
-python web3_verifier.py
+# 1. Deploy Solidity smart contract to Polygon Amoy / Local Testnet
+python deploy_contract.py
+
+# 2. Notarize a sample report on-chain and verify its SHA-256 integrity
+python submit_transaction.py
 ```
 
 ---

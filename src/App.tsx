@@ -25,6 +25,7 @@ import { BlockchainVerificationPage } from './pages/BlockchainVerificationPage';
 import { AIAssistantPage } from './pages/AIAssistantPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { ModelStudioPage } from './pages/ModelStudioPage';
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
@@ -68,6 +69,7 @@ const AppLayout: React.FC = () => {
               <Route path="/mapping" element={<FarmMappingPage />} />
               <Route path="/blockchain" element={<BlockchainVerificationPage />} />
               <Route path="/assistant" element={<AIAssistantPage />} />
+              <Route path="/model-studio" element={<ModelStudioPage />} />
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               {/* Fallback to Dashboard */}

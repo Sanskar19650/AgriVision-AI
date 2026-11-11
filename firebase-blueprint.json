@@ -122,6 +122,23 @@
       },
       "required": ["id", "userId", "topCrop", "topProbability"]
     },
+    "CropActivity": {
+      "title": "CropActivity",
+      "description": "Lifecycle activities and events across crop development stages",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Activity unique ID" },
+        "userId": { "type": "string", "description": "Farmer user ID" },
+        "farmId": { "type": "string", "description": "Farm plot identifier" },
+        "cropName": { "type": "string", "description": "Crop species", "maxLength": 80 },
+        "activityType": { "type": "string", "description": "Sowing, Irrigation, Fertilization, Scouting, Spraying, Harvesting", "maxLength": 50 },
+        "description": { "type": "string", "description": "Activity details and dosage notes", "maxLength": 500 },
+        "status": { "type": "string", "description": "Completed, Scheduled, In Progress", "maxLength": 30 },
+        "activityDate": { "type": "string", "description": "Scheduled or completed date in YYYY-MM-DD" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["id", "userId", "farmId", "cropName", "activityType", "status"]
+    },
     "BlockchainRecord": {
       "title": "BlockchainRecord",
       "description": "Immutable notarization audit trail on Solidity smart contract",
@@ -165,6 +182,10 @@
     "/crop_recommendations/{recId}": {
       "schema": { "$ref": "#/entities/CropRecommendation" },
       "description": "Stores Random Forest ML crop recommendation predictions"
+    },
+    "/crop_activities/{activityId}": {
+      "schema": { "$ref": "#/entities/CropActivity" },
+      "description": "Stores farm crop lifecycle activities, schedules and spray logs"
     },
     "/blockchain_records/{recordId}": {
       "schema": { "$ref": "#/entities/BlockchainRecord" },

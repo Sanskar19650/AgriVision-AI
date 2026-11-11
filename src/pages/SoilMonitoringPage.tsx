@@ -18,8 +18,8 @@ import { INITIAL_SOIL_READINGS, INITIAL_FARMS } from '../services/mockData';
 import { SoilReading } from '../types';
 import { notarizeReportOnBlockchain } from '../services/blockchainService';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../services/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { db, handleFirestoreError, OperationType } from '../services/firebase';
+import { doc, setDoc, collection, onSnapshot, query, where } from 'firebase/firestore';
 
 export const SoilMonitoringPage: React.FC = () => {
   const { user, isDemoUser } = useAuth();
@@ -37,20 +37,81 @@ export const SoilMonitoringPage: React.FC = () => {
 
   const [isSimulating, setIsSimulating] = useState(true);
   const [notarizing, setNotarizing] = useState(false);
+  const [savingFirestore, setSavingFirestore] = useState(false);
   const [blockchainSuccess, setBlockchainSuccess] = useState<string | null>(null);
+  const [firestoreStatus, setFirestoreStatus] = useState<string>('Connected to Cloud Firestore');
 
-  // Simulated live IoT stream jitter
+  // Real-time Firestore onSnapshot listener for soil readings (Phase 3 & 4)
   useEffect(() => {
-    if (mode !== 'iot' || !isSimulating) return;
+    if (!user || isDemoUser) return;
 
-    const interval = setInterval(() => {
-      setMoisture(prev => parseFloat(Math.min(50, Math.max(15, prev + (Math.random() * 0.8 - 0.4))).toFixed(1)));
-      setTemperature(prev => parseFloat(Math.min(38, Math.max(16, prev + (Math.random() * 0.4 - 0.2))).toFixed(1)));
-      setNitrogen(prev => Math.round(Math.min(220, Math.max(60, prev + (Math.random() * 2 - 1)))));
+    const path = 'soil_readings';
+    const q = query(
+      collection(db, path),
+      where('userId', '==', user.uid)
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const docs = snapshot.docs.map(d => d.data() as SoilReading);
+          // Pick newest
+          docs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+          const latest = docs[0];
+          if (latest) {
+            setNitrogen(latest.nitrogen);
+            setPhosphorus(latest.phosphorus);
+            setPotassium(latest.potassium);
+            setPh(latest.ph);
+            setMoisture(latest.moisture);
+            setTemperature(latest.temperature);
+            setFirestoreStatus(`Synced with Firestore: Reading #${latest.id}`);
+          }
+        }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.LIST, path);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user, isDemoUser]);
+
+  // Simulated live IoT stream jitter & ESP32 ingestion polling
+  useEffect(() => {
+    if (mode !== 'iot') return;
+
+    const interval = setInterval(async () => {
+      // Check if real ESP32 packet was posted to API
+      try {
+        const res = await fetch('/api/iot/latest');
+        if (res.ok) {
+          const packet = await res.json();
+          if (packet && packet.status === 'online') {
+            setMoisture(packet.moisture);
+            setPh(packet.ph);
+            setNitrogen(packet.nitrogen);
+            setPhosphorus(packet.phosphorus);
+            setPotassium(packet.potassium);
+            setTemperature(packet.temperature);
+            return;
+          }
+        }
+      } catch {
+        // Fallback to simulation jitter
+      }
+
+      if (isSimulating) {
+        setMoisture(prev => parseFloat(Math.min(50, Math.max(15, prev + (Math.random() * 0.8 - 0.4))).toFixed(1)));
+        setTemperature(prev => parseFloat(Math.min(38, Math.max(16, prev + (Math.random() * 0.4 - 0.2))).toFixed(1)));
+        setNitrogen(prev => Math.round(Math.min(220, Math.max(60, prev + (Math.random() * 2 - 1)))));
+      }
     }, 3000);
 
     return () => clearInterval(interval);
   }, [mode, isSimulating]);
+
 
   // Fertility score algorithm
   const calculateFertilityScore = () => {
@@ -173,6 +234,41 @@ export const SoilMonitoringPage: React.FC = () => {
           </div>
 
           <button
+            onClick={async () => {
+              setSavingFirestore(true);
+              try {
+                const readingData: SoilReading = {
+                  id: `soil-${Date.now()}`,
+                  userId: user?.uid || 'demo-user-123',
+                  farmId: selectedFarmId,
+                  nitrogen,
+                  phosphorus,
+                  potassium,
+                  ph,
+                  moisture,
+                  temperature,
+                  organicMatter,
+                  electricalConductivity: 0.82,
+                  healthScore,
+                  sensorSource: mode === 'iot' ? 'IoT Telemetry (ESP32)' : 'Soil Testing Lab',
+                  timestamp: new Date().toISOString()
+                };
+                if (!isDemoUser && user) {
+                  await setDoc(doc(db, 'soil_readings', readingData.id), readingData);
+                }
+                setFirestoreStatus(`Saved to Firestore: Reading #${readingData.id}`);
+              } finally {
+                setSavingFirestore(false);
+              }
+            }}
+            disabled={savingFirestore}
+            className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors disabled:opacity-50"
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            {savingFirestore ? 'Syncing...' : 'Save to Firestore'}
+          </button>
+
+          <button
             onClick={handleNotarizeOnBlockchain}
             disabled={notarizing}
             className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors disabled:opacity-50"
@@ -182,6 +278,16 @@ export const SoilMonitoringPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {firestoreStatus && (
+        <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 text-emerald-900 text-xs flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Radio className="w-4 h-4 text-emerald-600 animate-pulse" />
+            <span className="font-semibold">{firestoreStatus}</span>
+          </div>
+          <Badge variant="emerald" size="sm">Phase 4 Real-Time</Badge>
+        </div>
+      )}
 
       {blockchainSuccess && (
         <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200 text-purple-900 text-xs flex items-center justify-between animate-in fade-in">

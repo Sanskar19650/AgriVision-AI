@@ -16,9 +16,11 @@ import { runCropRecommendationModel } from '../services/aiService';
 import { CropRecommendationResult } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { db } from '../services/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 export const CropRecommendationPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isDemoUser } = useAuth();
 
   // Agronomic inputs
   const [nitrogen, setNitrogen] = useState(90);
@@ -64,6 +66,14 @@ export const CropRecommendationPage: React.FC = () => {
         rainfall
       );
       setResult(res);
+
+      if (!isDemoUser && user) {
+        try {
+          await setDoc(doc(db, 'crop_recommendations', res.id), res);
+        } catch (err) {
+          console.warn('Could not sync recommendation to Firestore:', err);
+        }
+      }
     } finally {
       setLoading(false);
     }

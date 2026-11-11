@@ -3,7 +3,7 @@
  * Preloaded for instant B.Tech demonstration and offline VS Code testing.
  */
 
-import { FarmPlot, SoilReading, DiseaseDetectionResult, DamageAssessmentResult, WeatherData, BlockchainRecord } from '../types';
+import { FarmPlot, SoilReading, DiseaseDetectionResult, DamageAssessmentResult, WeatherData, BlockchainRecord, CropActivity } from '../types';
 
 export const INITIAL_FARMS: FarmPlot[] = [
   {
@@ -308,3 +308,73 @@ export const INITIAL_WEATHER: WeatherData = {
     'Soil moisture in upper 15cm is holding steady. Drip irrigation can be reduced by 25% for the next 48 hours.',
   ],
 };
+
+export const INITIAL_CROP_ACTIVITIES: CropActivity[] = [
+  {
+    id: 'act-001',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    activityType: 'Sowing',
+    description: 'Nursery seedbed preparation with Trichoderma viride seed treatment @ 4g/kg seed.',
+    status: 'Completed',
+    activityDate: '2026-09-15',
+    createdAt: '2026-09-15T08:00:00Z',
+  },
+  {
+    id: 'act-002',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    activityType: 'Fertilization',
+    description: 'Basal dose application: DAP @ 50 kg/acre + MOP @ 30 kg/acre + Neem cake 200 kg/acre.',
+    status: 'Completed',
+    activityDate: '2026-10-02',
+    createdAt: '2026-10-02T09:30:00Z',
+  },
+  {
+    id: 'act-003',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    activityType: 'Irrigation',
+    description: 'Deficit drip irrigation schedule (2.5 hrs/day, dripper discharge 2.0 LPH).',
+    status: 'Completed',
+    activityDate: '2026-10-20',
+    createdAt: '2026-10-20T06:00:00Z',
+  },
+  {
+    id: 'act-004',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    activityType: 'Scouting',
+    description: 'Foliar pathology scouting for early blight lesions and whitefly vector trap counts.',
+    status: 'Completed',
+    activityDate: '2026-11-05',
+    createdAt: '2026-11-05T10:15:00Z',
+  },
+  {
+    id: 'act-005',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    activityType: 'Spraying',
+    description: 'Prophylactic 5% Neem Seed Kernel Extract (NSKE) spray for sucking pest deterrence.',
+    status: 'Scheduled',
+    activityDate: '2026-11-14',
+    createdAt: '2026-11-09T08:00:00Z',
+  },
+  {
+    id: 'act-006',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    activityType: 'Harvesting',
+    description: 'First picking of breaker stage tomatoes for regional wholesale market dispatch.',
+    status: 'Scheduled',
+    activityDate: '2026-12-01',
+    createdAt: '2026-11-09T08:00:00Z',
+  }
+];
+

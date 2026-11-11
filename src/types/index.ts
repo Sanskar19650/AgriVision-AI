@@ -164,3 +164,16 @@ export interface ChatMessage {
   timestamp: string;
   category?: 'disease' | 'soil' | 'scheme' | 'market' | 'general';
 }
+
+export interface CropActivity {
+  id: string;
+  userId: string;
+  farmId: string;
+  cropName: string;
+  activityType: 'Sowing' | 'Irrigation' | 'Fertilization' | 'Scouting' | 'Spraying' | 'Harvesting';
+  description: string;
+  status: 'Completed' | 'Scheduled' | 'In Progress';
+  activityDate: string;
+  createdAt: string;
+}
+

@@ -107,6 +107,21 @@ service cloud.firestore {
       allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
+    // Crop Lifecycle Activities Collection
+    match /crop_activities/{activityId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(activityId)
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.cropName is string
+                    && request.resource.data.activityType is string;
+      allow update: if isSignedIn()
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
     // Blockchain Records Collection
     match /blockchain_records/{recordId} {
       allow get: if isSignedIn() && resource.data.userId == request.auth.uid;

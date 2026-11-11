@@ -17,9 +17,11 @@ import { detectCropDamage } from '../services/aiService';
 import { DamageAssessmentResult } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { notarizeReportOnBlockchain } from '../services/blockchainService';
+import { db } from '../services/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 export const CropDamageDetectionPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isDemoUser } = useAuth();
   const [selectedSample, setSelectedSample] = useState(SAMPLE_DAMAGE_IMAGES[0]);
   const [imagePreview, setImagePreview] = useState<string>(SAMPLE_DAMAGE_IMAGES[0].previewUrl);
   const [analyzing, setAnalyzing] = useState(false);
@@ -44,6 +46,14 @@ export const CropDamageDetectionPage: React.FC = () => {
         }
       );
       setResult(res);
+
+      if (!isDemoUser && user) {
+        try {
+          await setDoc(doc(db, 'damage_assessments', res.id), res);
+        } catch (err) {
+          console.warn('Could not sync damage assessment to Firestore:', err);
+        }
+      }
     } finally {
       setAnalyzing(false);
     }
