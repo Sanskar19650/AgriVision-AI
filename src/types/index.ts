@@ -177,3 +177,57 @@ export interface CropActivity {
   createdAt: string;
 }
 
+export interface DailyAnalysisRecord {
+  id: string;
+  userId: string;
+  farmId: string;
+  farmName: string;
+  cropName: string;
+  analysisDate: string;
+  dayNumber: number; // Day into crop lifecycle (e.g. Day 42)
+  overallHealthScore: number; // 0-100
+  soilMetrics: {
+    ph: number;
+    moisture: number;
+    temperature: number;
+    nitrogen: number;
+    phosphorus: number;
+    potassium: number;
+  };
+  diseaseRisk: {
+    riskScorePercent: number;
+    suspectedPathogen: string;
+    soilPhFactor: string; // e.g., "Acidic (pH 5.4) promotes Fusarium"
+    correctiveAction: string;
+  };
+  irrigationStatus: 'Optimal' | 'Under-Irrigated' | 'Excess Moisture';
+  growthStage: string;
+  priorityTasks: string[];
+  storedInFirestore: boolean;
+  createdAt: string;
+}
+
+export interface CropLifecycleStage {
+  stageNumber: number;
+  name: string;
+  dayRange: string;
+  durationDays: number;
+  waterRequirement: string;
+  npkNutrientRatio: string;
+  criticalOperations: string[];
+  diseaseScoutingPoints: string[];
+  expectedMilestone: string;
+}
+
+export interface CropLifecycleGuide {
+  cropName: string;
+  botanicalName: string;
+  category: 'Cereal' | 'Horticulture' | 'Cash Crop' | 'Tuber' | 'Pulse';
+  totalDurationDays: number;
+  optimalSoilPh: { min: number; max: number };
+  idealTemperature: string;
+  seedRatePerAcre: string;
+  expectedYieldPerAcre: string;
+  stages: CropLifecycleStage[];
+}
+

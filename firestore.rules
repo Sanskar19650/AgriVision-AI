@@ -133,5 +133,17 @@ service cloud.firestore {
       allow update: if false; // Immutable ledger - updates strictly forbidden
       allow delete: if false; // Immutable ledger - deletion strictly forbidden
     }
+
+    // Daily 1-Day Analyses Collection
+    match /daily_analyses/{analysisId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(analysisId)
+                    && request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn()
+                    && resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
   }
 }

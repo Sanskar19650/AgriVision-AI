@@ -27,6 +27,7 @@ interface AuthContextType {
   loginWithEmail: (e: string, p: string) => Promise<void>;
   registerWithEmail: (e: string, p: string, name: string, role?: UserProfile['role']) => Promise<void>;
   loginWithDemo: (role?: UserProfile['role']) => void;
+  loginWithPhoneOtp: (phone: string, name?: string, role?: UserProfile['role']) => void;
   logout: () => Promise<void>;
   updateProfileData: (data: Partial<UserProfile>) => Promise<void>;
 }
@@ -55,20 +56,44 @@ const DEMO_AGRONOMIST_USER: UserProfile = {
   photoURL: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
 };
 
+const safeStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      return typeof window !== 'undefined' && window.localStorage ? window.localStorage.getItem(key) : null;
+    } catch {
+      return null;
+    }
+  },
+  setItem: (key: string, value: string): void => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, value);
+      }
+    } catch {}
+  },
+  removeItem: (key: string): void => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.removeItem(key);
+      }
+    } catch {}
+  }
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [user, setUser] = useState<UserProfile | null>(() => {
-    // Check if demo user saved in localStorage
-    const saved = localStorage.getItem('agrivision_session_user');
+    // Check if user session was saved in localStorage safely
+    const saved = safeStorage.getItem('agrivision_session_user');
     if (saved) {
       try { return JSON.parse(saved); } catch { return null; }
     }
-    // Default to demo farmer on initial boot for zero-friction evaluation
-    return DEMO_FARMER_USER;
+    // Start unauthenticated so the user encounters Login at the start
+    return null;
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [isDemoUser, setIsDemoUser] = useState<boolean>(() => {
-    return localStorage.getItem('agrivision_is_demo') !== 'false';
+    return safeStorage.getItem('agrivision_is_demo') === 'true';
   });
 
   useEffect(() => {
@@ -76,7 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setFirebaseUser(fUser);
       if (fUser) {
         setIsDemoUser(false);
-        localStorage.setItem('agrivision_is_demo', 'false');
+        safeStorage.setItem('agrivision_is_demo', 'false');
         
         try {
           const userDocRef = doc(db, 'users', fUser.uid);
@@ -85,7 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (snap.exists()) {
             const data = snap.data() as UserProfile;
             setUser(data);
-            localStorage.setItem('agrivision_session_user', JSON.stringify(data));
+            safeStorage.setItem('agrivision_session_user', JSON.stringify(data));
           } else {
             // First time Google user profile creation
             const newProfile: UserProfile = {
@@ -100,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             };
             await setDoc(userDocRef, newProfile);
             setUser(newProfile);
-            localStorage.setItem('agrivision_session_user', JSON.stringify(newProfile));
+            safeStorage.setItem('agrivision_session_user', JSON.stringify(newProfile));
           }
         } catch (err) {
           console.warn('Firestore user fetch failed, creating local profile:', err);
@@ -162,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn('Could not persist profile in firestore:', err);
       }
       setUser(newProfile);
-      localStorage.setItem('agrivision_session_user', JSON.stringify(newProfile));
+      safeStorage.setItem('agrivision_session_user', JSON.stringify(newProfile));
     } finally {
       setLoading(false);
     }
@@ -172,8 +197,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const selected = role === 'agronomist' ? DEMO_AGRONOMIST_USER : DEMO_FARMER_USER;
     setUser(selected);
     setIsDemoUser(true);
-    localStorage.setItem('agrivision_session_user', JSON.stringify(selected));
-    localStorage.setItem('agrivision_is_demo', 'true');
+    safeStorage.setItem('agrivision_session_user', JSON.stringify(selected));
+    safeStorage.setItem('agrivision_is_demo', 'true');
+  };
+
+  const loginWithPhoneOtp = (phone: string, name?: string, role: UserProfile['role'] = 'farmer') => {
+    const cleanDigits = phone.replace(/[^0-9]/g, '');
+    const verifiedUser: UserProfile = {
+      uid: `farmer-otp-${cleanDigits.slice(-6) || '789123'}`,
+      fullName: name || `Farmer (${phone.slice(-4) || 'Verified'})`,
+      email: `${cleanDigits || 'farmer'}@farmer.agrivision.ai`,
+      phone,
+      region: 'Nashik Agro-Cluster, Maharashtra',
+      role,
+      createdAt: new Date().toISOString(),
+      photoURL: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=200&q=80'
+    };
+    setUser(verifiedUser);
+    setIsDemoUser(false);
+    safeStorage.setItem('agrivision_session_user', JSON.stringify(verifiedUser));
+    safeStorage.setItem('agrivision_is_demo', 'false');
   };
 
   const logout = async () => {
@@ -184,15 +227,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setUser(null);
     setIsDemoUser(false);
-    localStorage.removeItem('agrivision_session_user');
-    localStorage.setItem('agrivision_is_demo', 'false');
+    safeStorage.removeItem('agrivision_session_user');
+    safeStorage.setItem('agrivision_is_demo', 'false');
   };
 
   const updateProfileData = async (data: Partial<UserProfile>) => {
     if (!user) return;
     const updated = { ...user, ...data };
     setUser(updated);
-    localStorage.setItem('agrivision_session_user', JSON.stringify(updated));
+    safeStorage.setItem('agrivision_session_user', JSON.stringify(updated));
 
     if (!isDemoUser && firebaseUser) {
       try {
@@ -214,6 +257,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginWithEmail,
         registerWithEmail,
         loginWithDemo,
+        loginWithPhoneOtp,
         logout,
         updateProfileData
       }}

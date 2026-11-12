@@ -9,6 +9,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { Footer } from './components/layout/Footer';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Pages
 import { LandingPage } from './pages/LandingPage';
@@ -32,7 +33,7 @@ const AppLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Determine if sidebar should be shown
-  const isLandingOrLogin = location.pathname === '/' || location.pathname === '/login';
+  const isLandingOrLogin = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/landing';
 
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col text-stone-900 font-sans antialiased">
@@ -57,8 +58,10 @@ const AppLayout: React.FC = () => {
         >
           <div className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
             <Routes>
-              <Route path="/" element={<LandingPage />} />
+              {/* Login at the start as requested by the user */}
+              <Route path="/" element={<LoginPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/landing" element={<LandingPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/farms" element={<FarmManagementPage />} />
               <Route path="/soil" element={<SoilMonitoringPage />} />
@@ -85,10 +88,12 @@ const AppLayout: React.FC = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppLayout />
-      </BrowserRouter>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppLayout />
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

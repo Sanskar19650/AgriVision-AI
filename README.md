@@ -227,7 +227,7 @@ PORT=3000
 | **Field Damage Demarcation** | Ultralytics YOLOv8x | Locust clusters and hail damage bounding boxes, PMFBY insurance claim qualification |
 | **Crop Recommendation** | Scikit-learn Random Forest | 7-feature agro-climatic matrix (N, P, K, Temp, Humidity, pH, Rainfall) |
 | **IoT Soil Health Monitoring** | ESP32 / LoRaWAN Simulation | Real-time NPK telemetry, capacitive moisture, ICAR fertilizer dosage advice |
-| **GIS Farm Demarcation** | Leaflet.js | Interactive polygon land boundary mapping, NDVI vegetation stress heatmap |
+| **GIS Farm Demarcation & Offline PWA** | Leaflet.js, Service Worker, CacheStorage | Offline-first plot polygons, GPS center coords, cached NDVI vegetation heatmap, fallback SVG tile engine |
 | **Blockchain Notary** | Solidity v0.8.20, Web3.py | SHA-256 cryptographic proof committed to Polygon testnet for zero report tampering |
 | **AI Agronomist Assistant** | Google Gemini 3.8 Flash | Multilingual guidance on crop nutrition, pests, and government subsidies |
 

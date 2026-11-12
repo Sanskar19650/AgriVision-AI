@@ -14,7 +14,7 @@ import {
   FileBarChart2,
   Settings,
   Home,
-  Code2,
+  Sprout,
   Brain
 } from 'lucide-react';
 
@@ -134,21 +134,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           ))}
         </div>
 
-        {/* Bottom Local Dev & Project Info Card */}
-        <div className="p-4 border-t border-stone-200/70 bg-stone-50/60 m-3 rounded-2xl">
-          <div className="flex items-center gap-2 text-stone-800 text-xs font-bold">
-            <Code2 className="w-4 h-4 text-emerald-600" />
-            <span>VS Code Ready</span>
+        {/* Bottom Agronomy Status & IoT Telemetry Card */}
+        <div className="p-4 border-t border-stone-200/70 bg-emerald-50/50 m-3 rounded-2xl border border-emerald-100">
+          <div className="flex items-center gap-2 text-emerald-950 text-xs font-bold">
+            <Sprout className="w-4 h-4 text-emerald-600" />
+            <span>Field Health Status</span>
           </div>
-          <p className="text-[11px] text-stone-500 mt-1 leading-snug">
-            FastAPI, PyTorch CNN, YOLOv8, and Solidity contracts ready for local run.
+          <p className="text-[11px] text-emerald-800 mt-1 leading-snug">
+            All 3 monitored plots calibrated with 24h soil moisture & disease surveillance.
           </p>
           <NavLink
-            to="/profile"
+            to="/farms"
             onClick={onClose}
-            className="mt-2 block text-center py-1.5 px-3 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-semibold text-[11px] transition-colors"
+            className="mt-2 block text-center py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] transition-colors shadow-2xs"
           >
-            Export & Setup Guide →
+            Farming Calendar & Guide →
           </NavLink>
         </div>
       </aside>

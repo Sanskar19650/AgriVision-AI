@@ -14,7 +14,7 @@ import {
   Database,
   Layers,
   Activity,
-  FileCode2
+  Tractor
 } from 'lucide-react';
 import { Badge } from '../components/common/Badge';
 
@@ -114,11 +114,11 @@ export const LandingPage: React.FC = () => {
             </Link>
 
             <Link
-              to="/profile"
+              to="/farms"
               className="px-5 py-3.5 rounded-xl bg-stone-800/80 hover:bg-stone-800 text-stone-300 hover:text-white font-medium text-xs border border-stone-700 transition-colors flex items-center gap-1.5"
             >
-              <FileCode2 className="w-4 h-4 text-emerald-400" />
-              VS Code Setup
+              <Tractor className="w-4 h-4 text-emerald-400" />
+              Farming Calendar & Guide
             </Link>
           </div>
         </div>
@@ -212,11 +212,11 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
           <Link
-            to="/profile"
+            to="/farms"
             className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-bold text-xs flex items-center gap-2 self-start"
           >
-            <FileCode2 className="w-4 h-4" />
-            Inspect Code in VS Code
+            <Tractor className="w-4 h-4" />
+            Explore Farming Lifecycle
           </Link>
         </div>
 

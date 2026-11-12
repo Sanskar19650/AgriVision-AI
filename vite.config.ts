@@ -4,7 +4,7 @@ import path from 'path';
 import { defineConfig, Plugin } from 'vite';
 import express from 'express';
 import dotenv from 'dotenv';
-import { apiRouter } from './src/server/apiRouter';
+import { apiRouter } from './src/server/apiRouter.ts';
 
 dotenv.config();
 
@@ -25,7 +25,7 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss(), apiServerPlugin()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve('.'),
       },
     },
     server: {

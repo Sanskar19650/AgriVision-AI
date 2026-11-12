@@ -378,3 +378,395 @@ export const INITIAL_CROP_ACTIVITIES: CropActivity[] = [
   }
 ];
 
+export const CROP_LIFECYCLE_GUIDES = [
+  {
+    cropName: 'Wheat',
+    botanicalName: 'Triticum aestivum',
+    category: 'Cereal' as const,
+    totalDurationDays: 130,
+    optimalSoilPh: { min: 6.0, max: 7.5 },
+    idealTemperature: '15°C - 24°C',
+    seedRatePerAcre: '40 - 45 kg',
+    expectedYieldPerAcre: '20 - 24 Quintals',
+    stages: [
+      {
+        stageNumber: 1,
+        name: 'Land Preparation & Seed Treatment',
+        dayRange: 'Day 0 - 10',
+        durationDays: 10,
+        waterRequirement: 'Pre-sowing irrigation (Paleva) to ensure 70% field capacity.',
+        npkNutrientRatio: 'Basal Dose: 50 kg DAP + 25 kg MOP + 10 kg Zinc Sulfate per acre.',
+        criticalOperations: [
+          'Deep plowing with disc harrow followed by 2 cross-plowings to achieve fine tilth.',
+          'Treat seeds with Thiram (2.5 g/kg) + Azotobacter biofertilizer (10 g/kg).',
+          'Level field with laser land leveler to prevent water stagnation.'
+        ],
+        diseaseScoutingPoints: ['Check for termite activity and soil-borne flag smut spores.'],
+        expectedMilestone: 'Moist seedbed prepared; seed dormancy broken.'
+      },
+      {
+        stageNumber: 2,
+        name: 'Sowing & Crown Root Initiation (CRI)',
+        dayRange: 'Day 11 - 25',
+        durationDays: 15,
+        waterRequirement: 'First critical irrigation at 21 days after sowing (CRI stage) is mandatory.',
+        npkNutrientRatio: 'No top-dressing yet; rely on basal fertilizer.',
+        criticalOperations: [
+          'Sow using Seed-cum-Fertilizer Drill at 4 - 5 cm depth.',
+          'Maintain row spacing of 20 - 22.5 cm.',
+          'Ensure uniform germination by maintaining soil crust moisture.'
+        ],
+        diseaseScoutingPoints: ['Scout for damping-off and foot rot in heavy soils.'],
+        expectedMilestone: 'Uniform 95%+ seedling emergence; primary root system anchored.'
+      },
+      {
+        stageNumber: 3,
+        name: 'Tillering & Jointing Vegetative Phase',
+        dayRange: 'Day 26 - 55',
+        durationDays: 30,
+        waterRequirement: 'Second irrigation at active tillering (40-45 DAS).',
+        npkNutrientRatio: 'First top dressing: 45 kg Urea/acre before irrigation.',
+        criticalOperations: [
+          'Weed control: Spray Sulfosulfuron 75% + Metsulfuron 5% @ 16 g/acre at 30-35 DAS.',
+          'Inspect tiller density (aim for 6-8 healthy tillers per plant).',
+          'Soil aeration through light inter-cultivation if soil crusted.'
+        ],
+        diseaseScoutingPoints: ['Check underside of lower leaves for Yellow Rust (Puccinia striiformis) pustules.'],
+        expectedMilestone: 'Canopy closure; rapid biomass accumulation.'
+      },
+      {
+        stageNumber: 4,
+        name: 'Booting, Heading & Flowering (Anthesis)',
+        dayRange: 'Day 56 - 85',
+        durationDays: 30,
+        waterRequirement: 'Third & fourth critical irrigations at late jointing and flowering.',
+        npkNutrientRatio: 'Second top dressing: 30 kg Urea + foliar spray of NPK 19:19:19 @ 1 kg/acre.',
+        criticalOperations: [
+          'Avoid water stress during earhead emergence to prevent floret sterility.',
+          'Foliar spray of Soluble Boron (20%) @ 1 g/L to stimulate pollen tube growth.',
+          'Pest monitoring for armyworms and aphid colonies on developing spikes.'
+        ],
+        diseaseScoutingPoints: ['Monitor for Powdery Mildew and Loose Smut in dense microclimates.'],
+        expectedMilestone: 'Earhead emergence complete; 100% pollination achieved.'
+      },
+      {
+        stageNumber: 5,
+        name: 'Milking & Dough Grain Filling',
+        dayRange: 'Day 86 - 110',
+        durationDays: 25,
+        waterRequirement: 'Light irrigation at milk stage; strictly discontinue 10 days before harvest.',
+        npkNutrientRatio: 'Foliar spray of 0:0:50 (Potassium Sulfate) @ 1.5 kg/acre to boost grain test weight.',
+        criticalOperations: [
+          'Protect crop from sudden terminal heat waves with light evening sprinkler runs.',
+          'Prevent lodging by avoiding irrigation during high wind forecasts.',
+          'Cease all synthetic chemical sprays to respect minimum residue limits.'
+        ],
+        diseaseScoutingPoints: ['Inspect grain heads for Karnal Bunt and glume blotch.'],
+        expectedMilestone: 'Grains harden from milk to hard dough; green pigment converts to golden straw.'
+      },
+      {
+        stageNumber: 6,
+        name: 'Harvesting, Threshing & Safe Storage',
+        dayRange: 'Day 111 - 130',
+        durationDays: 20,
+        waterRequirement: 'Zero irrigation. Allow crop and soil to dry completely.',
+        npkNutrientRatio: 'None.',
+        criticalOperations: [
+          'Harvest when grain moisture drops to 12 - 14% (grain cracks firmly between teeth).',
+          'Use combine harvester or manual sickle reaping during clear sunny hours.',
+          'Thresh, winnow, and clean chaff from seed lot.',
+          'Sun dry grain on tarpaulin for 2 days until moisture is under 12%.',
+          'Store in airtight metallic bins or hermetic bags fumigated with Aluminum Phosphide.'
+        ],
+        diseaseScoutingPoints: ['Check storage bins for Rice Weevil (Sitophilus oryzae) and grain mold.'],
+        expectedMilestone: 'Certified dry grain safely stored; stubble incorporated for soil carbon.'
+      }
+    ]
+  },
+  {
+    cropName: 'Tomato',
+    botanicalName: 'Solanum lycopersicum',
+    category: 'Horticulture' as const,
+    totalDurationDays: 110,
+    optimalSoilPh: { min: 6.0, max: 7.0 },
+    idealTemperature: '20°C - 30°C',
+    seedRatePerAcre: '50 - 60 grams (Hybrid)',
+    expectedYieldPerAcre: '25 - 35 Tonnes',
+    stages: [
+      {
+        stageNumber: 1,
+        name: 'Nursery Raising & Seedbed Prep',
+        dayRange: 'Day 0 - 25',
+        durationDays: 25,
+        waterRequirement: 'Fine rose-can misting twice daily in pro-trays.',
+        npkNutrientRatio: 'Sterilized cocopeat + vermicompost + 5g Trichoderma/kg substrate.',
+        criticalOperations: [
+          'Sow hybrid seeds in 98-cell seedling trays under 50% shade net.',
+          'Drench nursery with Copper Oxychloride (2.5 g/L) against damping off.',
+          'Hardening of seedlings 4 days prior to transplanting by withholding water.'
+        ],
+        diseaseScoutingPoints: ['Look for seedling stem collar damping-off (Pythium).'],
+        expectedMilestone: 'Healthy 4-leaf seedlings (12-15 cm height) ready for transplanting.'
+      },
+      {
+        stageNumber: 2,
+        name: 'Field Transplanting & Bed Formation',
+        dayRange: 'Day 26 - 40',
+        durationDays: 15,
+        waterRequirement: 'Immediate flood/drip soaking immediately after transplanting in the evening.',
+        npkNutrientRatio: 'Basal: 50 kg SSP + 30 kg MOP + 25 kg Urea + 10 t FYM/acre.',
+        criticalOperations: [
+          'Form raised beds (90 cm width, 30 cm height) with silver-black mulch film.',
+          'Transplant in zigzag layout with 45 cm plant-to-plant distance.',
+          'Install drip line under the mulch film.'
+        ],
+        diseaseScoutingPoints: ['Scout for transplant shock and cutworm attacks at soil level.'],
+        expectedMilestone: '100% transplant survival; new feeder roots established.'
+      },
+      {
+        stageNumber: 3,
+        name: 'Vegetative Growth & Trellising / Staking',
+        dayRange: 'Day 41 - 65',
+        durationDays: 25,
+        waterRequirement: 'Drip fertigation run 2-3 hours every alternate day.',
+        npkNutrientRatio: 'Fertigation: 19:19:19 @ 3 kg/acre every 4 days through venturi injector.',
+        criticalOperations: [
+          'Erect bamboo stakes and GI wire trellis system (1.5 m height).',
+          'Prune side suckers to maintain single or double leader vine structure.',
+          'Tie vines with twine every 20 cm to prevent soil contact.'
+        ],
+        diseaseScoutingPoints: ['Inspect lower leaves for concentric rings of Early Blight (Alternaria solani).'],
+        expectedMilestone: 'Robust vertical vine framework; first floral clusters emerging.'
+      },
+      {
+        stageNumber: 4,
+        name: 'Profuse Flowering & Fruit Setting',
+        dayRange: 'Day 66 - 85',
+        durationDays: 20,
+        waterRequirement: 'Consistent soil moisture without swings to prevent Blossom End Rot.',
+        npkNutrientRatio: 'Switch fertigation to 12:61:00 (MAP) + Calcium Nitrate @ 2.5 kg/acre.',
+        criticalOperations: [
+          'Install yellow sticky traps (15 traps/acre) for whitefly vector control.',
+          'Foliar spray of Planofix (NAA) @ 4 ml/15 L water to minimize flower drop.',
+          'Spray Boron (20%) @ 1 g/L to enhance fruit set and prevent catfacing.'
+        ],
+        diseaseScoutingPoints: ['Watch for Tomato Leaf Curl Virus (ToLCV) transmitted by whiteflies.'],
+        expectedMilestone: 'Dense fruit clusters setting; golf-ball sized green fruits developing.'
+      },
+      {
+        stageNumber: 5,
+        name: 'Fruit Enlargement & Color Turning (Breaker)',
+        dayRange: 'Day 86 - 100',
+        durationDays: 15,
+        waterRequirement: 'Moderate uniform drip; avoid sudden flooding which causes fruit cracking.',
+        npkNutrientRatio: 'Potassium Nitrate 13:0:45 @ 4 kg/acre + Micronutrient mixture.',
+        criticalOperations: [
+          'Foliar spray of Calcium Chloride @ 0.5% to firm fruit rind.',
+          'Inspect fruits for Helicoverpa tomato fruit borer bore holes.',
+          'Install pheromone traps (Helilure) @ 5 traps/acre.'
+        ],
+        diseaseScoutingPoints: ['Scout for Late Blight (Phytophthora) water-soaked lesions during humid spells.'],
+        expectedMilestone: 'First cluster reaches breaker stage (pink blush at blossom end).'
+      },
+      {
+        stageNumber: 6,
+        name: 'Multi-Pick Harvesting & Post-Harvest Care',
+        dayRange: 'Day 101 - 110+',
+        durationDays: 20,
+        waterRequirement: 'Maintain light drip runs between harvests.',
+        npkNutrientRatio: 'Maintenance 0:0:50 @ 2 kg/acre per picking flush.',
+        criticalOperations: [
+          'Harvest at breaker stage for distant transit; red ripe for local consumption.',
+          'Pick with calyx intact during early morning or late afternoon.',
+          'Sort out culled, sun-scalded, or pest-damaged fruits immediately.',
+          'Pack in plastic ventilated crates (not gunny sacks) to prevent bruising.'
+        ],
+        diseaseScoutingPoints: ['Inspect post-harvest crates for Anthracnose and Rhizopus soft rot.'],
+        expectedMilestone: 'High grade harvest dispatched to market; 6-8 total pickings obtained.'
+      }
+    ]
+  },
+  {
+    cropName: 'Rice / Paddy',
+    botanicalName: 'Oryza sativa',
+    category: 'Cereal' as const,
+    totalDurationDays: 140,
+    optimalSoilPh: { min: 5.5, max: 6.8 },
+    idealTemperature: '22°C - 34°C',
+    seedRatePerAcre: '15 - 20 kg (Transplanted)',
+    expectedYieldPerAcre: '26 - 32 Quintals',
+    stages: [
+      {
+        stageNumber: 1,
+        name: 'Puddle Preparation & Nursery Seeding',
+        dayRange: 'Day 0 - 25',
+        durationDays: 25,
+        waterRequirement: 'Standing water of 2-3 cm maintained in nursery bed.',
+        npkNutrientRatio: 'Basal nursery: 2 kg DAP + 1 kg MOP per 100 sq. meter bed.',
+        criticalOperations: [
+          'Seed salt-floatation test and fungicide dressing with Carbendazim (2 g/kg).',
+          'Puddle main field thoroughly with cage wheels to create impermeable hardpan.'
+        ],
+        diseaseScoutingPoints: ['Scout for Rice Blast (Pyricularia oryzae) spindle lesions.'],
+        expectedMilestone: 'Robust 25-day old seedlings with 4-5 leaves ready for transplanting.'
+      },
+      {
+        stageNumber: 2,
+        name: 'Transplanting & Tillering',
+        dayRange: 'Day 26 - 60',
+        durationDays: 35,
+        waterRequirement: 'Maintain 3 - 5 cm shallow standing water during early tillering.',
+        npkNutrientRatio: 'Basal dose: 50 kg DAP + 30 kg MOP + 10 kg Zinc Sulfate 21% per acre.',
+        criticalOperations: [
+          'Transplant 2-3 seedlings per hill at 20 cm x 15 cm spacing.',
+          'Apply Pre-emergence herbicide Pretilachlor @ 500 ml/acre within 3 days.'
+        ],
+        diseaseScoutingPoints: ['Check for Bacterial Leaf Blight (Xanthomonas) leaf tip yellowing.'],
+        expectedMilestone: '15-20 effective tillers per hill developed.'
+      },
+      {
+        stageNumber: 3,
+        name: 'Panicle Initiation & Booting',
+        dayRange: 'Day 61 - 90',
+        durationDays: 30,
+        waterRequirement: 'Uninterrupted 5 cm standing water layer is critical.',
+        npkNutrientRatio: 'Top dress 35 kg Urea/acre + foliar spray of NPK 13:0:45.',
+        criticalOperations: [
+          'Scout for Yellow Stem Borer (dead hearts) and Leaf Folder.',
+          'Install bird perches for natural insect predation.'
+        ],
+        diseaseScoutingPoints: ['Monitor for Sheath Blight (Rhizoctonia solani) snakeskin lesions.'],
+        expectedMilestone: 'Panicles fully elongated within the flag leaf sheath.'
+      },
+      {
+        stageNumber: 4,
+        name: 'Flowering & Grain Filling',
+        dayRange: 'Day 91 - 120',
+        durationDays: 30,
+        waterRequirement: 'Saturated soil; drain water 10 days before anticipated harvest.',
+        npkNutrientRatio: 'Foliar spray of 0:52:34 @ 1 kg/acre for bold grain fill.',
+        criticalOperations: [
+          'Inspect for Brown Planthopper (BPH) hopper-burn at base of hills.',
+          'Prevent lodging by managing drainage channels.'
+        ],
+        diseaseScoutingPoints: ['Watch for False Smut yellowish spore balls.'],
+        expectedMilestone: 'Panicles turn from green to golden amber; 85% grains filled.'
+      },
+      {
+        stageNumber: 5,
+        name: 'Harvesting, Threshing & Drying',
+        dayRange: 'Day 121 - 140',
+        durationDays: 20,
+        waterRequirement: 'Dry field condition.',
+        npkNutrientRatio: 'None.',
+        criticalOperations: [
+          'Harvest when 80% panicles have golden-yellow color and grain moisture is 20%.',
+          'Thresh and dry grain down to 14% moisture before warehousing.'
+        ],
+        diseaseScoutingPoints: ['Storage grain moths and weevils in silos.'],
+        expectedMilestone: 'High milling quality paddy safely bagged and certified.'
+      }
+    ]
+  }
+];
+
+export const INITIAL_DAILY_ANALYSES = [
+  {
+    id: 'daily-2026-11-11',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    farmName: 'GreenField Agro Sanctuary',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    analysisDate: '2026-11-11',
+    dayNumber: 48,
+    overallHealthScore: 94,
+    soilMetrics: {
+      ph: 6.6,
+      moisture: 38.2,
+      temperature: 24.5,
+      nitrogen: 185,
+      phosphorus: 42,
+      potassium: 210
+    },
+    diseaseRisk: {
+      riskScorePercent: 8,
+      suspectedPathogen: 'Low - Native Trichoderma Antagonism Active',
+      soilPhFactor: 'Optimal (pH 6.6) buffers against Fusarium and Phytophthora',
+      correctiveAction: 'No chemical intervention required; maintain current 2.5 LPH drip cycle.'
+    },
+    irrigationStatus: 'Optimal' as const,
+    growthStage: 'Vegetative & Trellising (Day 48 of 110)',
+    priorityTasks: [
+      'Tie vines to trellis GI wire to prevent foliage ground contact.',
+      'Maintain yellow sticky traps against whitefly vectors.',
+      'Scheduled foliar spray of NPK 19:19:19 tomorrow morning at 07:00 AM.'
+    ],
+    storedInFirestore: true,
+    createdAt: '2026-11-11T06:00:00Z'
+  },
+  {
+    id: 'daily-2026-11-10',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    farmName: 'GreenField Agro Sanctuary',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    analysisDate: '2026-11-10',
+    dayNumber: 47,
+    overallHealthScore: 92,
+    soilMetrics: {
+      ph: 6.5,
+      moisture: 36.8,
+      temperature: 25.1,
+      nitrogen: 180,
+      phosphorus: 40,
+      potassium: 205
+    },
+    diseaseRisk: {
+      riskScorePercent: 12,
+      suspectedPathogen: 'Early Blight risk low-moderate due to afternoon humidity spike',
+      soilPhFactor: 'Rhizosphere balanced; beneficial mycorrhizae active',
+      correctiveAction: 'Inspect lower foliage for pinpoint target spots.'
+    },
+    irrigationStatus: 'Optimal' as const,
+    growthStage: 'Vegetative & Trellising (Day 47 of 110)',
+    priorityTasks: [
+      'Executed 2 hour drip irrigation run.',
+      'Pruned suckers on row 4 to improve air circulation.'
+    ],
+    storedInFirestore: true,
+    createdAt: '2026-11-10T06:00:00Z'
+  },
+  {
+    id: 'daily-2026-11-09',
+    userId: 'demo-user-123',
+    farmId: 'farm-001',
+    farmName: 'GreenField Agro Sanctuary',
+    cropName: 'Tomato (Abhinav Hybrid)',
+    analysisDate: '2026-11-09',
+    dayNumber: 46,
+    overallHealthScore: 89,
+    soilMetrics: {
+      ph: 6.4,
+      moisture: 32.5,
+      temperature: 26.0,
+      nitrogen: 172,
+      phosphorus: 38,
+      potassium: 198
+    },
+    diseaseRisk: {
+      riskScorePercent: 15,
+      suspectedPathogen: 'Moisture deficit detected, slightly elevated stress index',
+      soilPhFactor: 'Slightly acidic trend, stable microbial balance',
+      correctiveAction: 'Increase drip run by 30 minutes.'
+    },
+    irrigationStatus: 'Under-Irrigated' as const,
+    growthStage: 'Vegetative & Trellising (Day 46 of 110)',
+    priorityTasks: [
+      'Calibrated ESP32 soil moisture probe.',
+      'Adjusted dripper line pressure to 1.5 bar.'
+    ],
+    storedInFirestore: true,
+    createdAt: '2026-11-09T06:00:00Z'
+  }
+];
+
